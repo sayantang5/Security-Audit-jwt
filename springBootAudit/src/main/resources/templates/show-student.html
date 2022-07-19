@@ -1,0 +1,92 @@
+ <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+	crossorigin="anonymous">
+
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+ 
+	<h1 align="center">Student Enquiry List</h1>
+	<hr />
+
+	<div class="container">
+
+		<!-- allStudent -->
+		Page size - [[${pageInfo.pageSize}]] | Total Records -
+			[[${pageInfo.totalRecord}]] | Showing page of
+			[[${pageInfo.currentPage}]] from [[${pageInfo.totalPage}]] 
+		
+
+		<table class="table table-striped">
+			<thead class="table-dark">
+				<tr>
+					<td>
+					<a th:href="@{/page(pageNo=${pageInfo.currentPage},shortBy='studentName',shortdir=${reversort})}" href="#"> Student Name</a>
+					</td>
+					<td>
+					<a th:href="@{/page(pageNo= ${pageInfo.currentPage},shortBy='Course',shortdir=${reversort})}" href="#">Course Name</a>
+					</td>
+					<td>
+					<a th:href="@{/page(pageNo= ${pageInfo.currentPage},shortBy='Exprience',shortdir=${reversort})}" href="#">Exp</a>
+					</td>
+					<td>update</td>
+					<td>Delete</td>
+				</tr>
+
+			</thead>
+
+			<tbody th:each="temp : ${allStudent}">
+
+				<tr>
+					<td th:text="${temp.studentName}"></td>
+					<td th:text="${temp.Course}"></td>
+					<td th:text="${temp.Exprience}"></td>
+
+					<td><a href="#"
+						th:href="@{/updateStudent(studentId = ${temp.studentId})}">update</a></td>
+					<td><a href="#"
+						th:href="@{/deleteStudent(studentId = ${temp.studentId})}">delete</a></td>
+				</tr>
+
+
+			</tbody>
+
+
+		</table>
+
+		<div>
+
+
+			 
+     <a th:if="${pageInfo.currentPage != 1 }" th:href="@{/page(pageNo=1,shortBy='studentId' ,shortdir=${shortdir})}" href="#">First</a>
+     <span th:unless="${pageInfo.currentPage != 1 }" >First</span>
+    
+      | 
+     
+     <a th:if="${pageInfo.currentPage  > 1 }"  th:href="@{/page(pageNo= ${pageInfo.currentPage} - 1,shortBy='studentId' ,shortdir=${shortdir})}"  href="#"> Previous </a>  
+     <span th:unless="${pageInfo.currentPage  > 1 }" >Previous</span>  
+     
+     |
+     
+			 
+			 
+			 <span
+				th:each="i :  ${#numbers.sequence(1,pageInfo.totalPage)}"> 
+				<a th:if="${i != pageInfo.currentPage}"  href="#" th:href="@{page(pageNo=${i},shortBy='studentId' ,shortdir=${shortdir})}">[[${i}]]</a>
+                <span th:if="${i == pageInfo.currentPage}" > [[${i}]]  </span> &nbsp;
+
+			</span>
+		</div>
+
+	</div>
+
+</body>
+</html>

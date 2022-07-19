@@ -1,0 +1,87 @@
+package com.sucurity.demo.service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.sucurity.demo.dto.EmployeeResponseDto;
+import com.sucurity.demo.dto.Employeedto;
+import com.sucurity.demo.entity.Employee;
+import com.sucurity.demo.repository.EmployeeRepository;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmployeeServiceimpl implements EmployeeService {
+
+	@Autowired
+	EmployeeRepository repository;
+
+	@Autowired
+	ModelMapper mapper;
+	
+	@Autowired(required=true)
+	private PasswordEncoder passwordencoder;
+
+	public EmployeeResponseDto SaveEmployee(Employeedto employeedto) {
+
+		Employee mapedEmployee = mapper.map(employeedto, Employee.class);
+		
+		
+		mapedEmployee.setEncripted_password(passwordencoder.encode(employeedto.getEncripted_password()));
+		
+
+		Employee savedEmployee = repository.save(mapedEmployee);
+
+		EmployeeResponseDto mapedEmployeeResponseDto = mapper.map(mapedEmployee, EmployeeResponseDto.class);
+
+		return mapedEmployeeResponseDto;
+
+	}
+
+	public List<EmployeeResponseDto> getAllEmployee() {
+
+		List<Employee> findAll = repository.findAll();
+
+		EmployeeResponseDto[] EmployeeDto = mapper.map(findAll, EmployeeResponseDto[].class);
+
+		List<EmployeeResponseDto> asList = Arrays.asList(EmployeeDto);
+
+		return asList;
+
+	}
+	
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		
+		
+		List<GrantedAuthority> roleList = new ArrayList<GrantedAuthority>();
+		
+		Employee findByemail = repository.findByemail(username);
+		
+		return  new User(findByemail.getEmail(), findByemail.getEncripted_password() , new ArrayList<>());
+		
+		
+	
+	}
+
+	@Override
+	public Employee getUser(String username) {
+
+		Employee findByemail = repository.findByemail(username);
+		
+		
+		return findByemail;
+	}
+
+	
+
+}

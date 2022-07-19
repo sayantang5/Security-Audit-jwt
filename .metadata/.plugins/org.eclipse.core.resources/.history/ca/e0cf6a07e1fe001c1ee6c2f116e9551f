@@ -1,0 +1,26 @@
+package com.sucurity.demo.dto;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.sucurity.demo.entity.Employee;
+
+public class AuthorizationDTO {
+	
+	
+	
+	
+
+	private int id;
+	
+	private String role;
+
+	
+	private Employee employee;
+
+
+}

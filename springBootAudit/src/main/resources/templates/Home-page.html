@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec = "http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+ 
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+<form th:action="@{/submitEnquiry}" th:object=${model}>
+
+<input type="hidden" th:field="*{studentId}">
+
+<label>Student Name :</label>
+<input type="text" th:field="*{studentName}">
+
+<br>
+
+<label>Course Name:</label>
+<select th:field="*{Course}">
+<option th:value="'none'" th:text="'none'"> select your course</option>
+<option th:value="'core'" th:text="'spring core'"> option 1</option>
+<option th:value="'boot'" th:text="'spring boot'"> option 2</option>
+<option th:value="'MS'" th:text="'spring boot+ MICROSERVICE'"> option 3</option>
+</select>
+
+<br>
+
+<label>Experience  :</label>
+<input type="text" th:field="*{Exprience}">
+
+<input type="submit" value="Enquire">
+
+</form>
+
+</body>
+</html>

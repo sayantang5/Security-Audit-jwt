@@ -1,0 +1,13 @@
+package com.sucurity.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootSecurityRestTemplateApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootSecurityRestTemplateApplication.class, args);
+	}
+
+}

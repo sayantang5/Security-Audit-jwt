@@ -1,0 +1,8 @@
+package com.sucurity.demo.entity;
+
+
+
+@Entiry
+public class Authorization {
+
+}

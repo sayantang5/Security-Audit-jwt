@@ -1,0 +1,5 @@
+package com.sucurity.demo.dto;
+
+public class AuthorizationDTO {
+
+}

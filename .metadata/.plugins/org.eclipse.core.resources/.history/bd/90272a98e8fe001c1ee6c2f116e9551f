@@ -1,0 +1,65 @@
+package com.sucurity.demo.security;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.sucurity.demo.entity.Employee;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
+
+public class MyAuthorizationFilter extends BasicAuthenticationFilter {
+
+	public MyAuthorizationFilter(AuthenticationManager authenticationManager) {
+		super(authenticationManager);
+		//TODO Auto-generated constructor stub
+	}
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+
+
+		String JWTToken = request.getHeader("Authorization");
+		
+		try {
+	String User=	Jwts.parser().setSigningKey("Mypersonalkey")
+			.parseClaimsJws(JWTToken)
+			.getBody()
+			.getSubject();
+		
+	
+	
+		
+		
+	UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(User,null, 
+			new ArrayList<>());
+	
+	
+	SecurityContextHolder.getContext().setAuthentication(token);
+	
+	chain.doFilter(request, response);
+		}
+		catch(Exception e){
+			
+			System.out.println("Exception occored ");
+			
+		}
+	
+	
+	}
+	
+	
+	
+}

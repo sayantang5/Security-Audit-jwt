@@ -1,0 +1,79 @@
+package com.sucurity.demo.controller;
+
+import com.sucurity.demo.entity.Logindetails;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+
+	private static String URL = "http://localhost:8082/login";
+	//http://localhost:8082/test
+	private static String TestURL="http://localhost:8082/test";
+
+	@Autowired
+	RestTemplate resttemplate;
+	
+@PostMapping("/login")
+	public ResponseEntity<String> attemptLogin(@RequestBody Logindetails logindetails) {
+
+		try {
+			ResponseEntity<String> response = null;
+
+			HttpHeaders header = new HttpHeaders();
+			header.set("Accept", "application/json");
+			header.set("Content", "application/json");
+
+			HttpEntity<Logindetails> entity = new HttpEntity<Logindetails>(logindetails, header);
+
+			response = resttemplate.exchange(URL, HttpMethod.POST, entity, String.class);
+
+			HttpHeaders headers = response.getHeaders();
+
+			return response.status(HttpStatus.ACCEPTED).headers(headers).body("Login successfull");
+
+		} catch (Exception e) {
+
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+
+		}
+
+	}
+
+@GetMapping("/test")
+public String getTeastData() {
+
+	try {
+		ResponseEntity<String> response = null;
+
+		HttpHeaders header = new HttpHeaders();
+		header.set("Accept", "application/json");
+		header.set("Content", "application/json");
+
+		HttpEntity<Logindetails> entity = new HttpEntity<Logindetails>(header);
+
+		response = resttemplate.exchange(URL, HttpMethod.GET, entity, String.class);
+
+		HttpHeaders headers = response.getHeaders();
+
+		return response.getBody();
+
+	} catch (Exception e) {
+
+		return "successfull";
+
+	}
+
+}
+
+}

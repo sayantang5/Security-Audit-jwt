@@ -1,0 +1,140 @@
+package com.sucurity.demo.security;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sucurity.demo.context.DemoApplicationContext;
+import com.sucurity.demo.dto.LoginRequestDTO;
+import com.sucurity.demo.entity.Authorization;
+import com.sucurity.demo.entity.Employee;
+import com.sucurity.demo.service.EmployeeService;
+import com.sucurity.demo.service.EmployeeServiceimpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class mycustomauthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+	AuthenticationManager authentication;
+
+	public mycustomauthenticationFilter(AuthenticationManager authentication) {
+
+		this.authentication = authentication;
+	}
+
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
+			throws AuthenticationException {
+
+		// String username = getUserName(request);
+		// String password = getPassword(request);
+
+		LoginRequestDTO readValue = null;
+		try {
+			readValue = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDTO.class);
+
+		} catch (StreamReadException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatabindException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(readValue.getUsername(),
+				readValue.getPassword(), new ArrayList<>());
+
+		Authentication authenticate = authentication.authenticate(token);
+
+		System.out.println("Inside mycustomauthenticationFilter");
+
+		return authenticate;
+
+		// return super.attemptAuthentication(request,response);
+
+	}
+
+	/*
+	 * private String getPassword(HttpServletRequest request) {
+	 * 
+	 * return request.getParameter("password"); }
+	 * 
+	 * private String getUserName(HttpServletRequest request) { return
+	 * request.getParameter("username"); }
+	 */
+
+	@Override
+	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+			Authentication authResult) throws IOException, ServletException {
+
+		String username = ((User) authResult.getPrincipal()).getUsername();
+
+		System.out.println("username is " + username);
+
+		// System.out.println("object is " + demoApplicationContext);
+
+		EmployeeServiceimpl employeeServiceimpl = (EmployeeServiceimpl) DemoApplicationContext
+				.getBean("employeeServiceimpl");
+
+		Employee user = employeeServiceimpl.getUser(username);
+
+		String roles = extracted(user);
+
+		String token = Jwts.builder().
+				setIssuer("Sayantan").
+				setSubject("username").
+				setAudience("Sayantan")
+				.setExpiration(Date.from(ZonedDateTime.now().plusHours(1).toInstant()))
+				.setId("101")
+				.signWith(SignatureAlgorithm.HS256, "Mypersonalkey")
+				.claim("roles", roles)
+				.claim("mail", user.getEmail())
+				.compact();
+
+		System.out.println(token);
+
+		response.addHeader("username", username);
+		response.addHeader("Authorization", token);
+
+		// SecurityContextHolder.getContext().setAuthentication(authResult);
+
+	}
+
+	private String extracted(Employee user) {
+		List<String> roles = new ArrayList<String>();
+
+		List<Authorization> auth = user.getAuthorization();
+
+		for (Authorization authorization : auth) {
+
+			roles.add(authorization.getRole());
+
+		}
+		return  String.join(",", roles);
+	}
+
+}

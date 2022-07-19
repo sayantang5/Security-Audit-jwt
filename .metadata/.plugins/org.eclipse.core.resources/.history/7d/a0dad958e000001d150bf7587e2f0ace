@@ -1,0 +1,45 @@
+package com.sucurity.demo.controller;
+
+import com.sucurity.demo.entity.Logindetails;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.header.Header;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class TestController {
+	
+	private static  String URL="http://localhost:8080/login";
+	
+	@Autowired
+	RestTemplate resttemplate;
+	
+	
+	
+	public ResponseEntity<String> attemptLogin( @RequestBody  Logindetails logindetails){
+		
+		
+		ResponseEntity<String> response = null;
+		
+		
+		HttpHeaders header = new HttpHeaders();
+		header.set("Accept", "application/json");
+		header.set("Content", "application/json");
+		
+		HttpEntity<Logindetails> entity = new HttpEntity<Logindetails>(logindetails,header);
+		
+		response=resttemplate.exchange(null, null)
+		
+		
+		
+		return response;
+		
+		
+
+}
+}

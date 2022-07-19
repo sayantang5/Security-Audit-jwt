@@ -1,0 +1,5 @@
+package com.sucurity.demo.entity;
+
+public class Logindetails {
+
+}
