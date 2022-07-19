@@ -12,15 +12,11 @@ public class SpringBootSecurityRestTemplateApplication {
 		SpringApplication.run(SpringBootSecurityRestTemplateApplication.class, args);
 	}
 
-	//@Bean
-	//public RestTemplate getRestTemplate() {
+	@Bean
+	public RestTemplate getRestTemplate() {
 
 	        	//return new RestTemplate();
 		
-		//return new RestTemplate();
-		
-		
-		
-		///new change to commit in new branch
-	//}
+		return new RestTemplate();
+	}
 }
