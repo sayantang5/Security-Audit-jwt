@@ -10,4 +10,9 @@ public class ServletInitializer extends SpringBootServletInitializer {
 		return application.sources(DemoVotingAppApplication.class);
 	}
 
+	//This is some thing new to pull
+		// And this is for testing 
+		//this is to  commit and push in git repository
+	
+	
 }
