@@ -14,7 +14,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 		// 12--9-2022
 	// 12--9-2022
 	
-	// from test2
+	// from test2 for testing
 	
 	
 }
